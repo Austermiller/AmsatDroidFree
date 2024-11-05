@@ -13,3 +13,5 @@ New Features and Bug Fix list:
 - Added theme styling so that the application displays in dark OR light theme UI based on how the user sets it in the Android UI settings.
 - Fixed issue where on some UI's the date/time picker rendered incorrectly.
 - App now checks and asks user for required Android permissions on an as needed basis.
+
+If you're not interested in the source code and only want to install and use the Android application then simply download the file, AmsatDroidFree.apk and install it on your phone.
