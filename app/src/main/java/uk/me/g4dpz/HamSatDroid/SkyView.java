@@ -1,11 +1,5 @@
 package uk.me.g4dpz.HamSatDroid;
 
-import java.text.NumberFormat;
-import java.util.Date;
-import java.util.GregorianCalendar;
-
-import uk.me.g4dpz.HamSatDroid.utils.IaruLocator;
-import uk.me.g4dpz.satellite.SatPos;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
@@ -26,6 +20,15 @@ import android.view.View;
 import android.view.ViewGroup.LayoutParams;
 import android.widget.FrameLayout;
 import android.widget.TextView;
+
+import java.text.NumberFormat;
+import java.util.Date;
+import java.util.GregorianCalendar;
+
+import uk.me.g4dpz.HamSatDroid.utils.IaruLocator;
+import uk.me.g4dpz.satellite.SatPos;
+
+
 
 public class SkyView extends ASDActivity implements SensorEventListener, OnGestureListener {
 

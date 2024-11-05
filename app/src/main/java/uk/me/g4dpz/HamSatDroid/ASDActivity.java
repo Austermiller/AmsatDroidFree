@@ -1,16 +1,19 @@
 package uk.me.g4dpz.HamSatDroid;
 
+
 import android.app.Activity;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 
+import uk.me.g4dpz.HamSatDroid.utils.IaruLocator;
 import uk.me.g4dpz.satellite.GroundStationPosition;
 
 /**
  * @author g4dpz
  * 
  */
+
 abstract class ASDActivity extends Activity {
 
 	private static final String ZERO_STRING = "0";
@@ -48,6 +51,11 @@ abstract class ASDActivity extends Activity {
 		String shomeLon = sharedPref.getString(HOME_LON, ZERO_STRING);
 		shomeLon = shomeLon.replace(COMMA, PERIOD);
 		HamSatDroid.setGroundStation(new GroundStationPosition(Double.valueOf(shomeLat), Double.valueOf(shomeLon), 0));
+		// gets the current maidenhead Grid Locator.  For future use perhaps.
+		final double homeLat = HamSatDroid.getGroundStation().getLatitude();
+		final double homeLong = HamSatDroid.getGroundStation().getLongitude();
+		final IaruLocator locator = new IaruLocator(homeLat, homeLong);
+		HamSatDroid.currentLocator = locator.toMaidenhead();
 	}
 
 	@Override

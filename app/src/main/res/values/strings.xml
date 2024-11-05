@@ -1,10 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">AmsatDroid Free</string>
+    <string name="app_name">AmsatDroid</string>
     <string name="CalculatePass">Calculate Pass</string>
     <string name="SetStartTime">Change Start Time</string>
     <string name="SatellitePrompt">Available Satellites</string>
     <string name="SetHomeLocation">Set Home Location</string>
+    <string name="SatelliteSort">Sort Satellite List</string>
+    <string name="SatSortByNameAsc">Sort By Sat Name A-Z</string>
+    <string name="SatSortByNameDesc">Sort By Sat Name Z-A</string>
+    <string name="SatSortByCatAsc">Sort By Catalog Number 0–9</string>
+    <string name="SatSortByCatDesc">Sort By Catalog Number 9–0</string>
+    <string name="TimeDisplay">Time Format</string>
+    <string name="TimeLoc">Use Local Time</string>
+    <string name="TimeUTC">Use UTC Time</string>
     <string name="About">About</string>
     <string name="Load">Update Keps</string>
     <string name="LoadElem">From SD Card (/nasabare.txt)</string>
@@ -32,9 +40,9 @@
     <string name="AboutString">
 	AmsatDroid: Amateur Radio Satellite Pass Calculator \n
 	 \n
-    HOMEPAGE \n
+    <!--HOMEPAGE \n
     http://sites.google.com/site/hamsatdroid/ \n
-    \n
+    \n-->
 	DISCLAIMER \n
 	\n
 	This software is provided \'as is\' with no explicit or implied warranties in respect of any properties, including, but not limited to, correctness and fitness for purpose.
@@ -52,5 +60,10 @@
 	- If your device is connected to the Internet, select \"Menu > Update Keps > From Web (amsat.org)\". If no error is displayed it means the operation was successful.\n
 	- Keps can also be update from a file in the SD card, by selecting \"Menu > Update Keps > From SD Card (/nasabare.txt)\". Please see the first item in this page for the expected location and format of this file. If no error is displayed it means the operation was successful.\n
 	</string>
-    
+    <string name="sat_pass_details">sat pass details</string>
+    <string name="home_location_lat_lon_gridsquare">Home Location (lat/lon/gridsquare):</string>
+    <string name="cancel">Cancel</string>
+    <string name="set">Set</string>
+    <string name="use_current">Use Current</string>
+
 </resources>

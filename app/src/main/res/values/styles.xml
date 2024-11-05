@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="mainstyle" parent="android:Theme.DeviceDefault">
+        <!-- Color palette -->
+        <item name="android:textColor">#ffffff</item>
+        <item name="android:listDivider">@drawable/divider</item>
+    </style>
+</resources>

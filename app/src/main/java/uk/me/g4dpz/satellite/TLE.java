@@ -149,7 +149,7 @@ public class TLE implements Serializable {
 			lineCount++;
 		}
 
-		catnum = Integer.parseInt(tle[1].substring(2, 7).trim());
+		catnum = tryParseInt(tle[1].substring(2, 7).trim());
 		name = tle[0].trim();
 		setnum = Integer.parseInt(tle[1].substring(64, 68).trim());
 		year = Integer.parseInt(tle[1].substring(18, 20).trim());
@@ -201,6 +201,14 @@ public class TLE implements Serializable {
 		preProcessTLESet();
 	}
 
+	public static Integer tryParseInt(String text) {
+		try {
+			return Integer.parseInt(text);
+		} catch (NumberFormatException e) {
+			return 0;
+		}
+	}
+
 	/**
      * 
      */
@@ -221,8 +229,13 @@ public class TLE implements Serializable {
 		final double xnodp = xno / (delo + 1.0);
 
 		/* Select a deep-space/near-earth ephemeris */
-
-		deepspace = TWO_PI / xnodp / MINS_PERDAY >= 0.15625;
+		int tleCatnum = getCatnum();
+		// The satellite 53106 (Greencube aka IO-117) should be treated as a MEO deep space satellite
+		if (tleCatnum == 53106){
+			deepspace = true;
+		} else {
+			deepspace = TWO_PI / xnodp / MINS_PERDAY >= 0.15625;
+		}
 	}
 
 	/**

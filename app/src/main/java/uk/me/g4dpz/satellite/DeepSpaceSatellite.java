@@ -83,15 +83,14 @@ public class DeepSpaceSatellite extends AbstractSatellite implements Serializabl
      * ECI satellite position and velocity. Use Convert_Sat_State() to convert to km and km/S.
      * 
      * @param tsince time since the epoch
-     * @param position the position
-     * @param velocity the velocity
-     * @param satPos the position of the satellite
      */
+
+
     @Override
-    protected synchronized void calculateSDP4(final double tsince) {
+    protected void calculateSDP4(final double tsince) {
 
         final double[] temp = new double[12];
-
+        //synchronized
         /* Initialization */
 
         if (!sdp4Init) {
@@ -861,7 +860,6 @@ public class DeepSpaceSatellite extends AbstractSatellite implements Serializabl
          * Initialises the Synchronous resonance terms.
          * 
          * @param tle The <code>TLE</code>
-         * @param dsv The <code>DeepSpaceValueObject</code>
          */
         private void initSynchronousResonanceTerms(final TLE tle) {
             resonance = true;
@@ -891,7 +889,6 @@ public class DeepSpaceSatellite extends AbstractSatellite implements Serializabl
          * Entrance for deep space secular effects.
          * 
          * @param tle the three line elements
-         * @param dsv the deep space values
          */
         private void dpsec(final TLE tle) {
             dsv.xll = dsv.xll + ssl * dsv.t;
@@ -1041,7 +1038,6 @@ public class DeepSpaceSatellite extends AbstractSatellite implements Serializabl
          * Entrance for lunar-solar periodics.
          * 
          * @param tle the three line elements
-         * @param dsv the deep space values
          */
         private void dpper(final TLE tle) {
             sinis = Math.sin(dsv.xinc);
@@ -1112,8 +1108,7 @@ public class DeepSpaceSatellite extends AbstractSatellite implements Serializabl
 
         /**
          * Apply periodics with Lyddane modification.
-         * 
-         * @param dsv the space values
+         *
          */
         private void applyPeriodics() {
             sinok = Math.sin(dsv.xnode);
@@ -1141,7 +1136,6 @@ public class DeepSpaceSatellite extends AbstractSatellite implements Serializabl
          * Reference: The 1992 Astronomical Almanac, page B6.
          * 
          * @param epoch the epach
-         * @param dsv the deep space values
          * @return the Greenwich Mean Sidereal Time
          */
         private double thetaG(final double epoch) {

@@ -1,13 +1,20 @@
 apply plugin: 'com.android.application'
 
 android {
-    compileSdkVersion 15
-    buildToolsVersion "26.0.2"
+    compileSdk 34
+    buildToolsVersion '34.0.0'
+    namespace "uk.me.g4dpz.HamSatDroid"
 
     defaultConfig {
         applicationId "uk.me.g4dpz.HamSatDroid"
-        minSdkVersion 15
-        targetSdkVersion 21
+
+        targetSdkVersion 34
+        minSdk 15
+
+    }
+
+    lintOptions {
+        disable 'PrivateResource'
     }
 
     buildTypes {
@@ -15,5 +22,21 @@ android {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.txt'
         }
+        debug{
+            debuggable true
+        }
+        debug() {
+            debuggable(true)
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.txt'
+        }
+
     }
+}
+
+dependencies {
+    implementation 'androidx.recyclerview:recyclerview:1.3.2'
+    implementation 'androidx.appcompat:appcompat:1.6.1'
+    implementation 'androidx.work:work-runtime:2.7.1'
+    implementation 'com.google.code.gson:gson:2.8.8'
 }

@@ -43,6 +43,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.TimeZone;
 
+
 /**
  * Class which provides Pass Prediction.
  * 
@@ -75,9 +76,9 @@ public class PassPredictor {
 	/**
 	 * Constructor.
 	 * 
-	 * @param tle
+	 * @param //tle
 	 *            the Three Line Elements
-	 * @param qth
+	 * @param //qth
 	 *            the ground station position
 	 * @throws IllegalArgumentException
 	 *             bad argument passed in
@@ -160,9 +161,18 @@ public class PassPredictor {
 		cal.clear();
 		cal.setTimeInMillis(date.getTime());
 
-		// wind back time 1/4 of an orbit
-		if (windBack) {
-			cal.add(Calendar.MINUTE, (int)(-24.0 * 60.0 / meanMotion / 4.0));
+		// Get satellite's current position (so we can find it's current elevation)
+		SatPos preSatPos = getSatPos(cal.getTime());
+		// wind back time a partial orbit (if 'windBack' = true AND if the satellite is currently above the horizon).
+		if (preSatPos.getElevation() > 0.0 && windBack) {
+			// is this satellite in a MEO or LEO orbit
+			if (tle.isDeepspace()){
+				// MEO Satellites require winding back time 1/2 of an orbit
+				cal.add(Calendar.MINUTE, (int)(-24.0 * 60.0 / meanMotion / 2.0));
+			} else {
+				// LEO Satellites require winding back time 1/4 of an orbit
+				cal.add(Calendar.MINUTE, (int)(-24.0 * 60.0 / meanMotion / 4.0));
+			}
 		}
 
 		SatPos satPos = getSatPos(cal.getTime());
@@ -262,21 +272,23 @@ public class PassPredictor {
 		return satPos;
 	}
 
-	/**
-	 * Gets a list of SatPassTime
+
+	 /** Gets a list of SatPassTime
 	 * 
 	 * @param start
 	 *            Date
 	 * 
 	 *            newTLE = true; validateData();
-	 * @param end
-	 *            Date
-	 * @param firstAosLimit
-	 *            in hours
+	 * @param
+	 *
+	 * @param
+	 *         //   in hours
 	 * @return List<SatPassTime>
 	 * @throws SatNotFoundException
-	 * @throws InvalidTleException
-	 */
+	 * @throws InvalidTleException*/
+
+
+	 // end   Date  firstAosLimit
 	public List<SatPassTime> getPasses(final Date start, final int hoursAhead, final boolean windBack)
 			throws InvalidTleException, SatNotFoundException {
 
@@ -292,6 +304,7 @@ public class PassPredictor {
 		Date lastAOS;
 
 		int count = 0;
+		int tQOMinutes = 0;
 
 		do {
 			if (count > 0) {
@@ -300,7 +313,13 @@ public class PassPredictor {
 			final SatPassTime pass = nextSatPass(trackStartDate, this.windBackTime);
 			lastAOS = pass.getStartTime();
 			passes.add(pass);
-			trackStartDate = new Date(pass.getEndTime().getTime() + (threeQuarterOrbitMinutes() * 60L * 1000L));
+			if (tle.isDeepspace()){
+				// Subtracting 10 for MEO Satellites.  Otherwise the app would occasionally miss some MEO passes.
+				tQOMinutes = threeQuarterOrbitMinutes() - 10;
+			} else {
+				tQOMinutes = threeQuarterOrbitMinutes();
+			}
+			trackStartDate = new Date(pass.getEndTime().getTime() + (tQOMinutes * 60L * 1000L));
 			count++;
 		} while (lastAOS.compareTo(trackEndDate) < 0);
 

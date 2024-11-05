@@ -67,10 +67,66 @@
 			</item>
 		</menu>
 	</item>
+
+	<item
+		android:id="@+id/MENU_TIME"
+		android:title="@string/TimeDisplay"
+		android:visible="true"
+		android:enabled="true">
+		<menu>
+			<item
+				android:visible="true"
+				android:enabled="true"
+				android:id="@+id/MENU_TIMELOCAL"
+				android:title="@string/TimeLoc">
+			</item>
+			<item
+				android:visible="true"
+				android:enabled="true"
+				android:id="@+id/MENU_TIMEUTC"
+				android:title="@string/TimeUTC">
+			</item>
+		</menu>
+	</item>
+
+	<item
+		android:id="@+id/MENU_SATSORT"
+		android:title="@string/SatelliteSort"
+		android:visible="true"
+		android:enabled="true">
+		<menu>
+			<item
+				android:visible="true"
+				android:enabled="true"
+				android:id="@+id/MENU_SATSORTNAMEASC"
+				android:title="@string/SatSortByNameAsc">
+			</item>
+			<item
+				android:visible="true"
+				android:enabled="true"
+				android:id="@+id/MENU_SATSORTNAMEDESC"
+				android:title="@string/SatSortByNameDesc">
+			</item>
+			<item
+				android:visible="true"
+				android:enabled="true"
+				android:id="@+id/MENU_SATSORTCATASC"
+				android:title="@string/SatSortByCatAsc">
+			</item>
+			<item
+				android:visible="true"
+				android:enabled="true"
+				android:id="@+id/MENU_SATSORTCATDESC"
+				android:title="@string/SatSortByCatDesc">
+			</item>
+		</menu>
+	</item>
+
 	<item 
 		android:id="@+id/LAUNCH_GROUND_VIEW" 
 		android:title="@string/MapView">
 	</item>
+
 	<item 
 		android:visible="true" 
 		android:enabled="true" 

@@ -38,7 +38,7 @@
 package uk.me.g4dpz.satellite;
 
 /**
- * The location of the Satellite Grund Station.
+ * The location of the Satellite Ground Station.
  * 
  * @author g4dpz
  */
@@ -131,7 +131,6 @@ public class GroundStationPosition {
     /**
      * The horizonElevations to set.
      * 
-     * @param horizonElevations the list of horizontal elevations
      * @throws IllegalArgumentException the input arguments were incorrect
      */
     public final void setHorizonElevations(final int[] theHorizonElevations)

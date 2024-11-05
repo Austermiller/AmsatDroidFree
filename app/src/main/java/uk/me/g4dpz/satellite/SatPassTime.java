@@ -41,10 +41,27 @@ import java.io.Serializable;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
+import java.util.TimeZone;
+import uk.me.g4dpz.HamSatDroid.AppConfig;
 
 public class SatPassTime implements Serializable {
 
 	private static final long serialVersionUID = -6408342316986801301L;
+
+	private boolean isSelected;
+	private String details = "";
+
+	public String getDetails() {
+		return details;
+	}
+
+	public boolean isSelected() {
+		return isSelected;
+	}
+
+	public void setSelected(boolean isSelected) {
+		this.isSelected = isSelected;
+	}
 
 	private Date startTime;
 	private Date endTime;
@@ -53,24 +70,16 @@ public class SatPassTime implements Serializable {
 	private int aos;
 	private int los;
 	private double maxEl;
-
+	private String TZone = " loc";
 	private static final String NEW_LINE = "\n";
 	private static final String DEG_NL = "\u00B0\n";
-
 	private static final SimpleDateFormat TIME_FORMAT = new SimpleDateFormat("HH:mm", Locale.ENGLISH);
+	private static TimeZone timeZoneUTC = TimeZone.getTimeZone("UTC");
+	private static TimeZone timeZoneDefault = TimeZone.getDefault();
 	private static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("MM dd, yyyy", Locale.ENGLISH);
 
-	public SatPassTime(final Date startTime, final Date endTime, final String polePassed, final int aos, final int los,
-			final double maxEl) {
-		new SatPassTime(startTime, endTime, new Date((startTime.getTime() + endTime.getTime()) / 2), polePassed, aos, los, maxEl);
-	}
-
-	public SatPassTime() {
-	}
-
-	public SatPassTime(final Date startTime, final Date endTime, final Date tca, final String polePassed, final int aosAzimuth,
-			final int losAzimuth, final double maxEl) {
-		// TODO Auto-generated constructor stub
+	public SatPassTime(final Date startTime, final Date endTime, final Date tca, final String polePassed, final int aosAzimuth, final int losAzimuth, final double maxEl) {
+		// constructor stub
 		this.startTime = new Date(startTime.getTime());
 		this.endTime = new Date(endTime.getTime());
 		this.polePassed = polePassed;
@@ -78,6 +87,7 @@ public class SatPassTime implements Serializable {
 		this.los = losAzimuth;
 		this.maxEl = maxEl;
 		this.tca = new Date(tca.getTime());
+		this.details = this.toString();
 	}
 
 	public final Date getStartTime() {
@@ -133,7 +143,19 @@ public class SatPassTime implements Serializable {
 	public String passDateTimeString() {
 
 		final double duration = (endTime.getTime() - startTime.getTime()) / 60000.0;
-		return "Date: " + DATE_FORMAT.format(startTime) + NEW_LINE + "Start Time: " + TIME_FORMAT.format(startTime) + " loc"
+
+		// display the local or UTC date/time depending on the user config setting.
+		if (!AppConfig.isUtcDateTime()){
+			TIME_FORMAT.setTimeZone(timeZoneDefault);
+			DATE_FORMAT.setTimeZone(timeZoneDefault);
+			TZone = " loc";
+		} else {
+			TIME_FORMAT.setTimeZone(timeZoneUTC);
+			DATE_FORMAT.setTimeZone(timeZoneUTC);
+			TZone = " UTC";
+		}
+
+		return "Date: " + DATE_FORMAT.format(startTime) + NEW_LINE + "Start Time: " + TIME_FORMAT.format(startTime) + TZone
 				+ NEW_LINE +
 				// "End Time: " + mTimeFormatter.format(endDate_time) + "\n" +
 				String.format("Duration: %4.1f min.", duration);

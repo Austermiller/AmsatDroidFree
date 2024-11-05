@@ -1,9 +1,6 @@
 package uk.me.g4dpz.HamSatDroid;
 
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
-import uk.me.g4dpz.HamSatDroid.utils.IaruLocator;
+import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.os.Bundle;
@@ -13,6 +10,12 @@ import android.preference.Preference.OnPreferenceChangeListener;
 import android.preference.PreferenceActivity;
 import android.preference.PreferenceScreen;
 import android.text.InputType;
+
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+import uk.me.g4dpz.HamSatDroid.utils.IaruLocator;
+
 
 public class PrefHandling extends PreferenceActivity {
 
@@ -26,6 +29,7 @@ public class PrefHandling extends PreferenceActivity {
 	private EditTextPreference latPref;
 	private EditTextPreference lonPref;
 	private EditTextPreference locatorPref;
+
 
 	@Override
 	protected void onCreate(final Bundle savedInstanceState) {
@@ -50,7 +54,7 @@ public class PrefHandling extends PreferenceActivity {
 
 		locatorPref = new EditTextPreference(this);
 		locatorPref.setKey(HOME_LOCATOR);
-		locatorPref.setTitle("IARU Locator");
+		locatorPref.setTitle("IARU (Grid) Locator");
 		locatorPref.setDefaultValue(DEFAULT_LOCATOR);
 		locatorPref.setDialogMessage("Please enter IARU (Maidenhead) Locator");
 		((PreferenceScreen)findPreference(MAIN_PREFERENCES)).addPreference(locatorPref);
@@ -58,14 +62,9 @@ public class PrefHandling extends PreferenceActivity {
 		// Save context for later
 		context = this;
 
-		latPref.getEditText().setInputType(
-				InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_DECIMAL | InputType.TYPE_NUMBER_FLAG_SIGNED);
-
-		lonPref.getEditText().setInputType(
-				InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_DECIMAL | InputType.TYPE_NUMBER_FLAG_SIGNED);
-
+		latPref.getEditText().setInputType(InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_DECIMAL | InputType.TYPE_NUMBER_FLAG_SIGNED);
+		lonPref.getEditText().setInputType(InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_DECIMAL | InputType.TYPE_NUMBER_FLAG_SIGNED);
 		locatorPref.getEditText().setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_NORMAL);
-
 		latPref.setOnPreferenceChangeListener(new LatLonLocationPrefChangeListener());
 		lonPref.setOnPreferenceChangeListener(new LatLonLocationPrefChangeListener());
 		locatorPref.setOnPreferenceChangeListener(new LatLonLocationPrefChangeListener());
@@ -129,8 +128,8 @@ public class PrefHandling extends PreferenceActivity {
 				else if (changedPref.getKey().equals(HOME_LOCATOR)) {
 
 					final IaruLocator iaruLocator = new IaruLocator(newString);
-					final String latitude = String.format(FORMAT_10_5F, iaruLocator.getLatitude().toDegrees());
-					final String longitude = String.format(FORMAT_10_5F, iaruLocator.getLongitude().toDegrees());
+					@SuppressLint("DefaultLocale") final String latitude = String.format(FORMAT_10_5F, iaruLocator.getLatitude().toDegrees());
+					@SuppressLint("DefaultLocale") final String longitude = String.format(FORMAT_10_5F, iaruLocator.getLongitude().toDegrees());
 
 					changedPref.getEditor().putString(HOME_LAT, latitude).commit();
 					latPref.setText(latitude);
@@ -138,7 +137,6 @@ public class PrefHandling extends PreferenceActivity {
 					lonPref.setText(longitude);
 				}
 			}
-
 			return acceptInput;
 		}
 

@@ -68,10 +68,14 @@ public final class SatelliteFactory {
 
         Satellite satellite = null;
 
+        // if the satellite is in a deep space (period > 225 minutes)  MEO or HEO orbit
+        // then use the SDP4 orbital model, otherwise use the SGP4 orbital model
         if (tle.isDeepspace()) {
+            // (period > 225 minutes)  MEO or HEO orbit
             satellite = new DeepSpaceSatellite(tle);
         }
         else {
+            // (period < 225 minutes)  LEO orbit
             satellite = new LEOSatellite(tle);
         }
         return satellite;

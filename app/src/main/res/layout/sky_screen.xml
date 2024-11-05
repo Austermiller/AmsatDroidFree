@@ -17,7 +17,7 @@
 					android:gravity="center_vertical|center_horizontal"> 
 				</TextView>
 				<TextView 
-					android:text="Home Location (lat/lon/gridsquare): " 
+					android:text="@string/home_location_lat_lon_gridsquare"
 					android:id="@+id/SKY_VIEW_HOME_LOCATION" 
 					android:layout_width="fill_parent" 
 					android:layout_height="wrap_content" 
@@ -30,7 +30,8 @@
 					android:layout_width="wrap_content" 
 					android:layout_height="wrap_content"
 					android:layout_alignParentLeft="true"
-					android:layout_below="@+id/SKY_VIEW_HOME_LOCATION">
+					android:layout_below="@+id/SKY_VIEW_HOME_LOCATION"
+					android:layout_alignParentStart="true">
 				</TextView>
 				<TextView 
 					android:text="@string/SatelliteLocation" 
@@ -38,7 +39,8 @@
 					android:layout_width="wrap_content" 
 					android:layout_height="wrap_content"
 					android:layout_alignParentRight="true"
-					android:layout_below="@+id/SKY_VIEW_HOME_LOCATION">
+					android:layout_below="@+id/SKY_VIEW_HOME_LOCATION"
+					android:layout_alignParentEnd="true">
 				</TextView>
 			</RelativeLayout>
 		<FrameLayout 

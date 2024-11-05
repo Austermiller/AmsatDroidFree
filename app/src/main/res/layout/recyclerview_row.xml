@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_margin="8dp"
+    android:orientation="horizontal"
+    android:visibility="visible">
+
+    <TextView
+        android:id="@+id/satPassDetails"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:text="@string/sat_pass_details"
+        android:textColor="@android:color/darker_gray"
+        android:textSize="14sp" />
+
+    <CheckBox
+        android:id="@+id/chkAlertSelected"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_centerVertical="true"
+        android:width="48dp"
+        android:minHeight="48dp"
+        android:layout_alignParentEnd="true" />
+
+    <ImageView
+        android:id="@+id/imageView1"
+        android:layout_width="28dp"
+        android:layout_height="wrap_content"
+        android:layout_centerVertical="true"
+        android:adjustViewBounds="true"
+        android:minWidth="28dp"
+        android:minHeight="28dp"
+        android:scaleType="fitEnd"
+        android:visibility="visible"
+        android:layout_marginRight="12dp"
+        android:layout_toLeftOf="@id/chkAlertSelected"
+        android:src="@drawable/bell"
+        android:layout_toStartOf="@id/chkAlertSelected"
+        android:layout_marginEnd="12dp" />
+
+</RelativeLayout>
+
+

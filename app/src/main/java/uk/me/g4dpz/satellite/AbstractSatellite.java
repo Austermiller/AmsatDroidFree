@@ -313,10 +313,6 @@ public abstract class AbstractSatellite implements Satellite, Serializable {
 	 * 
 	 * @param time
 	 *            the time
-	 * @param position
-	 *            the position
-	 * @param satPos
-	 *            the satellite position
 	 */
 	private void calculateLatLonAlt(final double time, final Vector4 positionVector, final SatPos satellitePosition) {
 
@@ -371,8 +367,6 @@ public abstract class AbstractSatellite implements Satellite, Serializable {
 	 * 
 	 * @param gsPos
 	 *            the ground station position
-	 * @param satPos
-	 *            the position of the satellite
 	 * @param date
 	 *            the date
 	 */
@@ -495,8 +489,6 @@ public abstract class AbstractSatellite implements Satellite, Serializable {
 	 *            the ground tstation position
 	 * @param squintVector
 	 *            the squint vector
-	 * @param satellitePosition
-	 *            the satellite position
 	 * 
 	 */
 	private void calculateObs(final double julianUTC, final Vector4 positionVector, final Vector4 velocityVector,
@@ -848,6 +840,8 @@ public abstract class AbstractSatellite implements Satellite, Serializable {
 		else {
 			calculateSGP4(tsince);
 		}
+
+
 
 		// Scale position and velocity vectors to km and km/s
 		AbstractSatellite.convertSatState(position, velocity);

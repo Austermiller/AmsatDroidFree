@@ -1,16 +1,5 @@
 package uk.me.g4dpz.HamSatDroid;
 
-import java.text.NumberFormat;
-import java.util.Date;
-import java.util.GregorianCalendar;
-import java.util.List;
-import java.util.Locale;
-
-import uk.me.g4dpz.HamSatDroid.utils.IaruLocator;
-import uk.me.g4dpz.satellite.InvalidTleException;
-import uk.me.g4dpz.satellite.SatNotFoundException;
-import uk.me.g4dpz.satellite.SatPos;
-import uk.me.g4dpz.satellite.Satellite;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -22,14 +11,29 @@ import android.graphics.Path;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.os.Handler;
+import android.util.DisplayMetrics;
+import android.util.TypedValue;
 import android.view.Display;
 import android.view.GestureDetector;
 import android.view.GestureDetector.OnGestureListener;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.ViewConfiguration;
 import android.view.WindowManager;
 import android.widget.FrameLayout;
 import android.widget.TextView;
+
+import java.text.NumberFormat;
+import java.util.Date;
+import java.util.GregorianCalendar;
+import java.util.List;
+import java.util.Locale;
+
+import uk.me.g4dpz.HamSatDroid.utils.IaruLocator;
+import uk.me.g4dpz.satellite.InvalidTleException;
+import uk.me.g4dpz.satellite.SatNotFoundException;
+import uk.me.g4dpz.satellite.SatPos;
+import uk.me.g4dpz.satellite.Satellite;
 
 public class GroundView extends ASDActivity implements OnGestureListener {
 
@@ -52,9 +56,17 @@ public class GroundView extends ASDActivity implements OnGestureListener {
 	private Bitmap homePic;
 	private Bitmap satPic;
 
+
+
 	@Override
 	public void onCreate(final Bundle savedInstanceState) {
+
+		// enableEdgeToEdge();
+		//EdgeToEdge
+		//EdgeToEdge.enable(this);
 		super.onCreate(savedInstanceState);
+		//WindowCompat.setDecorFitsSystemWindows(getWindow(), true);
+
 
 		mapBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.world);
 		satBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.saticon);
@@ -64,6 +76,7 @@ public class GroundView extends ASDActivity implements OnGestureListener {
 
 		mapView = new MapView(this);
 		setContentView(R.layout.map_screen_layout);
+
 		((FrameLayout)findViewById(R.id.MAP_VIEW_FRAME)).addView(mapView);
 
 		// check if we have a groundstation, if not create one
@@ -98,6 +111,8 @@ public class GroundView extends ASDActivity implements OnGestureListener {
 			observerText.setText(formatGeoText("Home Latitude", getHomeLat(), N_STRING, S_STRING)
 					+ formatGeoText("Home Longitude", getHomeLon(), E_STRING, W_STRING) + "Home Gridsquare: "
 					+ locator.toMaidenhead());
+			// Gets the current maidenhead Grid Locator.  For future use perhaps.
+			HamSatDroid.currentLocator = locator.toMaidenhead();
 		}
 	}
 
@@ -178,13 +193,41 @@ public class GroundView extends ASDActivity implements OnGestureListener {
 			footprintLinePaint.setStyle(Paint.Style.STROKE);
 
 			display = ((WindowManager)getSystemService(Context.WINDOW_SERVICE)).getDefaultDisplay();
+			// display.
 
-			displayHeight = display.getHeight();
-			displayWidth = display.getWidth();
+
+			/*int hhfg = getStatusBarHeight();
+			Spinner sp = ((Spinner)findViewById(R.id.SatelliteSelectorSpinner));
+			ViewGroup decoreView = (ViewGroup)sp.getRootView();
+			int barSize = ((ViewGroup)decoreView.getChildAt(0)).getChildAt(0).getTop();*/
+
+
+
+			DisplayMetrics lDisplayMetrics = new DisplayMetrics();
+			display.getMetrics(lDisplayMetrics);
+
+			int ht = getStatusBarHeight();
+			int navHT = getNavigationBarHeight();
+			int hss = getTitleBarHeight();
+
+
+			displayWidth = lDisplayMetrics.widthPixels;
+			displayHeight = ((lDisplayMetrics.heightPixels - navHT) - 0) - hss; // - 252;// - hhfg;
+
+
+
 
 			mapWidth = mapBitmap.getWidth();
 			mapHeight = mapBitmap.getHeight();
 			double scale = 1.0;
+
+
+			// test
+
+			//int hhfg = getStatusBarHeight();
+
+
+			// end test
 
 			// we process differently if it's portrait or landscape
 			if (displayHeight > displayWidth) {
@@ -194,19 +237,19 @@ public class GroundView extends ASDActivity implements OnGestureListener {
 					mapHeight *= scale;
 				}
 				if (mapHeight > displayHeight) {
-					scale = scale * ((double)displayHeight / (double)mapHeight);
+					scale = scale * (((double)displayHeight / (double)mapHeight));
 					mapWidth *= scale;
 					mapHeight *= scale;
 				}
 			}
 			else {
 				if (mapHeight > displayHeight) {
-					scale = scale * ((double)displayHeight / (double)mapHeight);
+					scale = scale * ((((double)displayHeight / (double)mapHeight)));
 					mapWidth *= scale;
 					mapHeight *= scale;
 				}
 				if (mapWidth > displayWidth) {
-					scale = (double)displayWidth / (double)mapWidth;
+					scale = ((double)displayWidth / (double)mapWidth);
 					mapWidth *= scale;
 					mapHeight *= scale;
 				}
@@ -233,6 +276,39 @@ public class GroundView extends ASDActivity implements OnGestureListener {
 			writingPaint.setTextAlign(Paint.Align.CENTER);
 			writingPaint.setColor(Color.BLACK);
 
+		}
+
+		public int getStatusBarHeight() {
+			int result = 0;
+			int resourceId = getResources().getIdentifier("status_bar_height", "dimen", "android");
+			if (resourceId > 0) {
+				result = getResources().getDimensionPixelSize(resourceId);
+			}
+			return result;
+		}
+
+		public int getNavigationBarHeight()
+		{
+			boolean hasMenuKey = ViewConfiguration.get(this.getContext()).hasPermanentMenuKey();
+			int resourceId = getResources().getIdentifier("navigation_bar_height", "dimen", "android");
+			if (resourceId > 0 && !hasMenuKey)
+			{
+				return getResources().getDimensionPixelSize(resourceId);
+			}
+			return 0;
+		}
+
+		public int getTitleBarHeight()
+		{
+
+			// Calculate ActionBar height
+			TypedValue tv = new TypedValue();
+			if (getTheme().resolveAttribute(android.R.attr.actionBarSize, tv, true))
+			{
+				int actionBarHeight = TypedValue.complexToDimensionPixelSize(tv.data,getResources().getDisplayMetrics());
+				return  actionBarHeight;
+			}
+			return 0;
 		}
 
 		@Override
@@ -282,7 +358,6 @@ public class GroundView extends ASDActivity implements OnGestureListener {
 						- satPic.getHeight() / 2.0);
 				final int satLeft = (int)Math.round(longitude * (mapWidth / 360.0) - satPic.getWidth() / 2.0);
 				canvas.drawBitmap(satPic, satLeft + getLeft(), satTop + getTop(), null);
-
 			}
 			catch (final InvalidTleException e) {
 				e.printStackTrace();
@@ -399,7 +474,6 @@ public class GroundView extends ASDActivity implements OnGestureListener {
 	}
 
 	/**
-	 * @param pos
 	 * @return
 	 */
 	private static double radToDeg(final double value) {
