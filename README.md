@@ -1,4 +1,6 @@
-Here is an updated version (1.0.16) of the AmsatDroidFree application originally created by Dave Johnson G4DPZ.
+Track satellites orbiting the Earth in real time and predict their passes over your location.
+
+Here is an updated version of the AmsatDroidFree application (originally created by Dave Johnson G4DPZ).
 
 New Features and Bug Fix list:
 - Gradle dependencies updated.
