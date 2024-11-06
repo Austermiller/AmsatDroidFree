@@ -6,9 +6,9 @@ New Features and Bug Fix list:
 - Gradle dependencies updated.
 - Celestrak kep URL updated to... "https://celestrak.org/NORAD/elements/gp.php?GROUP=weather&FORMAT=tle" it was using "http://celestrak.com/NORAD/elements/noaa.txt" which is no longer a valid URL
 - Changed kep reference URLs to http(S) secured
-- Added an alert feature to remind the user that a satellite AOS is coming in 15 minutes.
-- Added a sort feature which allows the user to sort the list of satellites
-- Added a feature so the user can view the pass date/time in Local or UTC formatting.
+- Added an alert feature to remind the user that a satellite AOS is coming in 15 minutes (see screenshot below).
+- Added a sort feature which allows the user to sort the list of satellites (see screenshot below).
+- Added a feature so the user can view the pass date/time in Local or UTC formatting (see screenshot below).
 - Fixed landscape layout issue where part of the mapview would be missing on certain UI's.
 - Fixed issue where MEO satellites (like IO-117 aka:Greencube) didn't always show the complete pass.
 - Fixed issue where under certain conditions a LEO and MEO satellite pass prediction wouldn't show up depending on how far into the current pass you currently were.
@@ -16,4 +16,6 @@ New Features and Bug Fix list:
 - Fixed issue where on some UI's the date/time picker rendered incorrectly.
 - App now checks and asks user for required Android permissions on an as needed basis.
 
-If you're not interested in the source code and only want to install and use the Android application then simply download the file, AmsatDroidFree.apk and install it on your phone.
+<img src="https://github.com/user-attachments/assets/f720ceee-869e-4291-beec-2edda97e1556" alt="Alt Text" width="258" height="560">
+&nbsp;&nbsp;
+<img src="https://github.com/user-attachments/assets/9bfadf2d-0927-450a-8189-6d41bb3512bf" alt="Alt Text" width="258" height="560">
