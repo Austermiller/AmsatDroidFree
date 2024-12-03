@@ -18,4 +18,5 @@ New Features and Bug Fix list:
 
 <img src="https://github.com/user-attachments/assets/f720ceee-869e-4291-beec-2edda97e1556" alt="Alt Text" width="258" height="560">
 &nbsp;&nbsp;
-<img src="https://github.com/user-attachments/assets/9bfadf2d-0927-450a-8189-6d41bb3512bf" alt="Alt Text" width="258" height="560">
+<img src="https://github.com/user-attachments/assets/46c06ff0-7989-40b8-b8c8-620d81573216" alt="Alt Text" width="258" height="560">
+
