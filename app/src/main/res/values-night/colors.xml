@@ -18,6 +18,6 @@
     <color name="black">#000000</color>
     <color name="bluelink">#80b3ff</color>
 
-    <color name="backgroundColor">#FFFFFF</color>
-    <color name="textColor">#949494</color>
+    <color name="backgroundColor">#101010</color>
+    <color name="textColor">@android:color/darker_gray</color>
 </resources>

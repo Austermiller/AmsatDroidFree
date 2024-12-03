@@ -2,6 +2,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
+    android:background="@color/backgroundColor"
     android:id="@+id/LLparent"
     android:orientation="vertical" >
 
@@ -23,6 +24,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="10dip"
+                android:textColor="@color/textColor"
                 android:gravity="center_vertical|center_horizontal"
                 android:text="@string/Satellite" />
 
@@ -49,6 +51,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="10dip"
+                android:textColor="@color/textColor"
                 android:gravity="center_vertical|center_horizontal"
                 android:text="@string/CalculatePassesForTheNext" />
 
@@ -68,6 +71,7 @@
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="10dip"
+        android:textColor="@color/textColor"
         android:gravity="center_vertical|center_horizontal"
         android:text="@string/StartTime" />
 
@@ -105,6 +109,7 @@
         android:id="@+id/latlon_view"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:textColor="@color/textColor"
         android:text="" >
     </TextView>
 
@@ -113,7 +118,9 @@
         android:layout_width="wrap_content"
         android:layout_height="0dp"
         android:divider="#FFCC00"
-        android:dividerHeight="2dp"/>
+        android:dividerHeight="2dp"
+        android:textColor="@color/textColor"
+        />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/my_recycler_view"
@@ -123,6 +130,7 @@
         android:scrollbars="vertical"
         android:divider="#FFCC00"
         android:dividerHeight="2dp"
+        android:textColor="@color/textColor"
         />
 
 </LinearLayout>

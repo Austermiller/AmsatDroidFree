@@ -19,11 +19,11 @@
         android:id="@+id/chkAlertSelected"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
         android:layout_alignParentRight="true"
         android:layout_centerVertical="true"
         android:width="48dp"
-        android:minHeight="48dp"
-        android:layout_alignParentEnd="true" />
+        android:minHeight="48dp" />
 
     <ImageView
         android:id="@+id/imageView1"

@@ -3,7 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     package="uk.me.g4dpz.HamSatDroid"
     android:versionCode="26"
-    android:versionName="1.0.16">
+    android:versionName="1.0.17">
 
     <uses-sdk
         android:minSdkVersion="15"
@@ -18,7 +18,7 @@
     <uses-permission android:name="android.permission.WAKE_LOCK" />
     <uses-permission android:name="android.permission.VIBRATE" />
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
-    <uses-permission android:name="android.permission.SCHEDULE_EXACT_ALARM" />
+    <uses-permission android:name="android.permission.SCHEDULE_EXACT_ALARM" tools:ignore="ProtectedPermissions" />
     <uses-permission android:name="android.permission.USE_EXACT_ALARM" />
     <uses-permission android:name="android.permission.SET_ALARM" />
 
@@ -46,7 +46,7 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name="PrefHandling" android:launchMode="singleTop">
+        <activity android:name="PrefHandling" android:launchMode="singleTop" android:theme="@style/Preference">
         </activity>
         <activity
             android:name="GroundView"

@@ -3,6 +3,7 @@ package uk.me.g4dpz.HamSatDroid;
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.content.Context;
+import android.content.res.Resources;
 import android.os.Bundle;
 import android.preference.EditTextPreference;
 import android.preference.Preference;
@@ -10,6 +11,9 @@ import android.preference.Preference.OnPreferenceChangeListener;
 import android.preference.PreferenceActivity;
 import android.preference.PreferenceScreen;
 import android.text.InputType;
+
+import androidx.annotation.StyleRes;
+import androidx.appcompat.app.AppCompatDelegate;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -32,7 +36,20 @@ public class PrefHandling extends PreferenceActivity {
 
 
 	@Override
+	public void onStart() {
+		super.onStart();
+	}
+
+	@Override
 	protected void onCreate(final Bundle savedInstanceState) {
+
+		int themeMode = AppCompatDelegate.getDefaultNightMode();
+		if(themeMode == 2){
+			setTheme(R.style.PreferenceDark);
+		} else {
+			setTheme(R.style.Preference);
+		}
+
 		super.onCreate(savedInstanceState);
 
 		// Load the XML preferences file
@@ -68,7 +85,6 @@ public class PrefHandling extends PreferenceActivity {
 		latPref.setOnPreferenceChangeListener(new LatLonLocationPrefChangeListener());
 		lonPref.setOnPreferenceChangeListener(new LatLonLocationPrefChangeListener());
 		locatorPref.setOnPreferenceChangeListener(new LatLonLocationPrefChangeListener());
-
 	}
 
 	public class LatLonLocationPrefChangeListener implements OnPreferenceChangeListener {

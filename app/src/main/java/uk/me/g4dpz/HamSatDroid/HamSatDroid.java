@@ -50,6 +50,7 @@ import android.widget.Toast;
 
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
+import androidx.appcompat.app.AppCompatDelegate;
 import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -105,6 +106,7 @@ public class HamSatDroid extends ASDActivity implements OnGestureListener {
     private static final String PASS_PREDICTIONS_FOR_SATELLITE = "Pass predictions for satellite ";
     private static final String SLASH = "/";
     private static final String FOR_HOME_COORDINATES_LAT_LON_GRIDSQUARE = ", for home coordinates (lat/lon/gridsquare) ";
+    private static final String UI_THEME = "uiTheme";
     private static final String PASS_HEADER = "passHeader";
     private static final String SELECTED_PASS_TIME = "selectedPassTime";
     private static final String SELECTED_SAT_INDEX = "selectedSatIndex";
@@ -187,20 +189,6 @@ public class HamSatDroid extends ASDActivity implements OnGestureListener {
 
         // Load layout from XML
         setContentView(R.layout.pass_screen);
-
-        // rootView = findViewById(R.id.SatelliteSelectorSpinner);
-
-        /*final ViewGroup viewGroup = (ViewGroup) ((ViewGroup) this
-                .findViewById(android.R.id.content)).getChildAt(0);
-
-        ViewCompat.setOnApplyWindowInsetsListener(viewGroup, new OnApplyWindowInsetsListener() {
-            @Override
-            public WindowInsetsCompat onApplyWindowInsets(View view, WindowInsetsCompat windowInsetsCompat) {
-                //This is where you get DisplayCutoutCompat
-                DisplayCutoutCompat dhm = windowInsetsCompat.getDisplayCutout();
-                return windowInsetsCompat;
-            }
-        });*/
 
         // Save context for later
         context = this;
@@ -341,9 +329,7 @@ public class HamSatDroid extends ASDActivity implements OnGestureListener {
     }
 
     @Override
-    public void onStart() {
-        super.onStart();
-    }
+    public void onStart() { super.onStart(); }
 
     @Override
     public void onStop() {
@@ -406,38 +392,7 @@ public class HamSatDroid extends ASDActivity implements OnGestureListener {
     protected void onResume() {
         super.onResume();
 
-        // test
-
-
-
-        // Use The topmost view of the activity, which
-        // is guaranteed to be asked about window insets/
-
-
-        /*ViewCompat.setOnApplyWindowInsetsListener(rootView, new OnApplyWindowInsetsListener() {
-            @NonNull
-            @Override
-            public WindowInsetsCompat onApplyWindowInsets(@NonNull View v, @NonNull WindowInsetsCompat insets) {
-
-                DisplayCutoutCompat gg = insets.getDisplayCutout();
-
-                        *//*Insets insetsw = windowInsets.getInsets(WindowInsetsCompat.Type.systemBars());
-                        Log.d("DEBUG", "Insets: " + insets.toString());
-                        v.setPadding(0, insets.top, 0, insets.bottom);
-                        return WindowInsetsCompat.CONSUMED;
-
-                        //THIS is the value you want.
-                        int statusB = insets.getInsets(WindowInsetsCompat.Type.systemBars());
-                        int statusBarHeight = insets.getSystemWindowInsetTop();*//*
-
-                // Let the view handle insets as it likes.
-                return ViewCompat.onApplyWindowInsets(v,insets);
-            }
-        });*/
-
-        // end test
-
-        //  I added this so that the alarm/notification setup would have the correct information
+        //  This setObserver() was added so that the alarm/notification setup would have the correct information
         //  about the alarm settings.  This way it can keep a reference to display the
         //  alarm Checked in the pass list (recycler view) and also allow the user to remove/delete the pending alarm(s).
         setObserver();
@@ -494,6 +449,28 @@ public class HamSatDroid extends ASDActivity implements OnGestureListener {
 
         // Retrieve passes
         restorePassesFromFile();
+
+        final SharedPreferences.Editor SPeditor = getPreferences(0).edit();
+        // restore the user's UI Theme preference (dark or light)
+        final String restoredUIthemePref = prefs.getString(UI_THEME, "DARK");
+        // restore the user's UI Theme preference (dark or light)
+        if (restoredUIthemePref.equals("DARK")){
+            // Activate Dark theme
+            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
+            // set preference string to DARK
+            SPeditor.putString(UI_THEME, "DARK");
+        } else if (restoredUIthemePref.equals("LIGHT")) {
+            // Activate Light theme
+            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
+            // set preference string to LIGHT
+            SPeditor.putString(UI_THEME, "LIGHT");
+        } else {
+            // Activate Dark theme
+            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
+            // set preference string to DARK
+            SPeditor.putString(UI_THEME, "DARK");
+        }
+        SPeditor.commit();
     }
 
     @Override
@@ -554,6 +531,16 @@ public class HamSatDroid extends ASDActivity implements OnGestureListener {
             editor.putBoolean(UTC_TIME, UTC);
         } else {
             editor.putBoolean(UTC_TIME, false);
+        }
+
+        // save user's UI Theme preference (DARK or LIGHT)
+        int themeMode = AppCompatDelegate.getDefaultNightMode();
+        if(themeMode == 2){
+            // mode is DARK
+            editor.putString(UI_THEME, "DARK");
+        } else {
+            // mode is LIGHT
+            editor.putString(UI_THEME, "LIGHT");
         }
 
         // Create a Gson object which is used to serialize Java objects to JSON (and deserialize them back to Java).
@@ -1141,6 +1128,12 @@ public class HamSatDroid extends ASDActivity implements OnGestureListener {
             } else if (selectedTime.equals("24 hours")) {
                 new CalcPassTask().execute(24);
             }
+        } else if (item.getItemId() == R.id.MENU_UIDARK) {
+            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
+            Toast.makeText(context, "Dark activated", Toast.LENGTH_LONG).show();
+        } else if (item.getItemId() == R.id.MENU_UILIGHT) {
+            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
+            Toast.makeText(context, "Light activated", Toast.LENGTH_LONG).show();
         } else if (item.getItemId() == R.id.MENU_SATSORTNAMEASC) {
             // User wants the app to sort the satellite list by name in asc order
             Spinner SatSelSpinner = ((Spinner) findViewById(R.id.SatelliteSelectorSpinner));

@@ -90,6 +90,27 @@
 	</item>
 
 	<item
+		android:id="@+id/MENU_UITHEME"
+		android:title="@string/UITheme"
+		android:visible="true"
+		android:enabled="true">
+		<menu>
+			<item
+				android:visible="true"
+				android:enabled="true"
+				android:id="@+id/MENU_UIDARK"
+				android:title="@string/Dark">
+			</item>
+			<item
+				android:visible="true"
+				android:enabled="true"
+				android:id="@+id/MENU_UILIGHT"
+				android:title="@string/Light">
+			</item>
+		</menu>
+	</item>
+
+	<item
 		android:id="@+id/MENU_SATSORT"
 		android:title="@string/SatelliteSort"
 		android:visible="true"
