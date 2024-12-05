@@ -3,7 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     package="uk.me.g4dpz.HamSatDroid"
     android:versionCode="26"
-    android:versionName="1.0.17">
+    android:versionName="1.0.18">
 
     <uses-sdk
         android:minSdkVersion="15"

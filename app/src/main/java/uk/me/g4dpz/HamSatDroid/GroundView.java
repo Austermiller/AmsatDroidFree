@@ -61,12 +61,8 @@ public class GroundView extends ASDActivity implements OnGestureListener {
 	@Override
 	public void onCreate(final Bundle savedInstanceState) {
 
-		// enableEdgeToEdge();
-		//EdgeToEdge
-		//EdgeToEdge.enable(this);
 		super.onCreate(savedInstanceState);
 		//WindowCompat.setDecorFitsSystemWindows(getWindow(), true);
-
 
 		mapBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.world);
 		satBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.saticon);
@@ -76,7 +72,6 @@ public class GroundView extends ASDActivity implements OnGestureListener {
 
 		mapView = new MapView(this);
 		setContentView(R.layout.map_screen_layout);
-
 		((FrameLayout)findViewById(R.id.MAP_VIEW_FRAME)).addView(mapView);
 
 		// check if we have a groundstation, if not create one
@@ -193,15 +188,6 @@ public class GroundView extends ASDActivity implements OnGestureListener {
 			footprintLinePaint.setStyle(Paint.Style.STROKE);
 
 			display = ((WindowManager)getSystemService(Context.WINDOW_SERVICE)).getDefaultDisplay();
-			// display.
-
-
-			/*int hhfg = getStatusBarHeight();
-			Spinner sp = ((Spinner)findViewById(R.id.SatelliteSelectorSpinner));
-			ViewGroup decoreView = (ViewGroup)sp.getRootView();
-			int barSize = ((ViewGroup)decoreView.getChildAt(0)).getChildAt(0).getTop();*/
-
-
 
 			DisplayMetrics lDisplayMetrics = new DisplayMetrics();
 			display.getMetrics(lDisplayMetrics);
@@ -210,27 +196,17 @@ public class GroundView extends ASDActivity implements OnGestureListener {
 			int navHT = getNavigationBarHeight();
 			int hss = getTitleBarHeight();
 
-
 			displayWidth = lDisplayMetrics.widthPixels;
+			//displayHeight = lDisplayMetrics.heightPixels;
 			displayHeight = ((lDisplayMetrics.heightPixels - navHT) - 0) - hss; // - 252;// - hhfg;
-
-
-
 
 			mapWidth = mapBitmap.getWidth();
 			mapHeight = mapBitmap.getHeight();
 			double scale = 1.0;
 
-
-			// test
-
-			//int hhfg = getStatusBarHeight();
-
-
-			// end test
-
 			// we process differently if it's portrait or landscape
 			if (displayHeight > displayWidth) {
+				// Portrait
 				if (mapWidth > displayWidth) {
 					scale = (double)displayWidth / (double)mapWidth;
 					mapWidth *= scale;
@@ -243,8 +219,13 @@ public class GroundView extends ASDActivity implements OnGestureListener {
 				}
 			}
 			else {
+				// Landscape
+				// Hide the Action Bar when the map is shown in Landscape to give more room.
+				if (getSupportActionBar() != null) {
+					getSupportActionBar().hide();
+				}
 				if (mapHeight > displayHeight) {
-					scale = scale * ((((double)displayHeight / (double)mapHeight)));
+					scale = 1 + (scale * ((((double)displayHeight / (double)mapHeight))));
 					mapWidth *= scale;
 					mapHeight *= scale;
 				}
