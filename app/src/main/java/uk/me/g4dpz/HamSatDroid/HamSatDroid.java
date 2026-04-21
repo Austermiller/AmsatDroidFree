@@ -100,6 +100,9 @@ public class HamSatDroid extends ASDActivity implements OnGestureListener {
     private static final String AMATEUR_CELESTRAK = "AMATEUR_CELESTRAK";
     private static final String RESOURCES_CELESTRAK = "RESOURCES_CELESTRAK";
     private static final String NEW_CELESTRAK = "NEW_CELESTRAK";
+    //private static final String POTENTIALDECAYS_CELESTRAK =
+
+    private static final String POTENTIALDECAYS_CELESTRAK_CELESTRAK = "POTENTIALDECAYS_CELESTRAK";
     private static final String AMATEUR_AMSAT = "AMATEUR_AMSAT";
     private static final String COLON_NL = ":\n";
     private static final String FOR_THE_NEXT = ", for the next ";
@@ -118,6 +121,7 @@ public class HamSatDroid extends ASDActivity implements OnGestureListener {
     private static final String HOME_LAT = "homeLat";
     private static final String HOME_LOCATOR = "homeLocator";
     private static final String KEPS_UPDATED = "Keps updated!";
+
     private Context context;
     private static final String SAT_SORT_METHOD = "SatSortingMethod";
     private static final String UTC_TIME = "utcTime";
@@ -127,12 +131,18 @@ public class HamSatDroid extends ASDActivity implements OnGestureListener {
     private static final String BIN_PASS_FILENAME = "prefs.bin";
     private static final String BIN_ELEM_FILENAME = "elems.bin";
     private static final String ELEM_URL_AMATEUR_AMSAT = "https://www.amsat.org/amsat/ftp/keps/current/nasabare.txt";
-    private static final String ELEM_URL_AMATEUR_CELESTRAK = "https://celestrak.com/NORAD/elements/amateur.txt";
+    private static final String ELEM_URL_AMATEUR_CELESTRAK = "https://celestrak.org/NORAD/elements/gp.php?GROUP=amateur&FORMAT=tle";
+    // was...   https://celestrak.com/NORAD/elements/amateur.txt
     private static final String ELEM_URL_WEATHER_CELESTRAK = "https://celestrak.org/NORAD/elements/gp.php?GROUP=weather&FORMAT=tle";
     // was using "https://celestrak.com/NORAD/elements/noaa.txt" which is no longer a valid URL
-    private static final String ELEM_URL_CUBESAT_CELESTRAK = "https://celestrak.com/NORAD/elements/cubesat.txt";
-    private static final String ELEM_URL_RESOURCES_CELESTRAK = "https://celestrak.com/NORAD/elements/resource.txt";
-    private static final String ELEM_URL_NEW_CELESTRAK = "https://celestrak.com/NORAD/elements/tle-new.txt";
+    private static final String ELEM_URL_CUBESAT_CELESTRAK = "https://celestrak.org/NORAD/elements/gp.php?GROUP=cubesat&FORMAT=tle";
+    // was... "https://celestrak.com/NORAD/elements/cubesat.txt";
+    private static final String ELEM_URL_RESOURCES_CELESTRAK = "https://celestrak.org/NORAD/elements/gp.php?GROUP=resource&FORMAT=tle";
+    // was... "https://celestrak.com/NORAD/elements/resource.txt";
+    private static final String ELEM_URL_NEW_CELESTRAK = "https://celestrak.org/NORAD/elements/gp.php?GROUP=last-30-days&FORMAT=tle";
+    // was... "https://celestrak.com/NORAD/elements/tle-new.txt";
+    private static final String ELEM_URL_POTENTIALDECAYS_CELESTRAK = "https://celestrak.org/NORAD/elements/gp.php?SPECIAL=DECAYING&FORMAT=tle";
+
     // Various
     private static List<TLE> allSatElems;
     private int defaultSatIndex;
@@ -941,6 +951,8 @@ public class HamSatDroid extends ASDActivity implements OnGestureListener {
                 url = new URL(ELEM_URL_RESOURCES_CELESTRAK);
             } else if (NEW_CELESTRAK.equals(kepSource)) {
                 url = new URL(ELEM_URL_NEW_CELESTRAK);
+            } else if (POTENTIALDECAYS_CELESTRAK_CELESTRAK.equals(kepSource)) {
+                url = new URL(ELEM_URL_POTENTIALDECAYS_CELESTRAK);
             } else {
                 throw new IllegalArgumentException("Unknown keplerian source[" + kepSource + "]");
             }
@@ -1188,6 +1200,11 @@ public class HamSatDroid extends ASDActivity implements OnGestureListener {
             return true;
         } else if (item.getItemId() == R.id.MENU_DOWNLOAD_NEW_CELESTRAK) {
             setKepsSource(NEW_CELESTRAK);
+            updateKepsTask = new LoadElemNetTask();
+            updateKepsTask.execute(0);
+            return true;
+        } else if (item.getItemId() == R.id.MENU_DOWNLOAD_PotentialDecays_CELESTRAK) {
+            setKepsSource(POTENTIALDECAYS_CELESTRAK_CELESTRAK);
             updateKepsTask = new LoadElemNetTask();
             updateKepsTask.execute(0);
             return true;

@@ -25,7 +25,7 @@
     <string name="DownloadWeatherCelestrakElem">Weather (celestrak.com)</string>
     <string name="DownloadResourcesCelestrakElem">Resources (celestrak.com)</string>
     <string name="DownloadNewCelestrakElem">New launches (celestrak.com)</string>
-    
+    <string name="DownloadPotentialDecaysCelestrakElem">Potential Decays (celestrak.com)</string>
     <string name="TimeSelectorPrompt">Select Time Period</string>
     <string name="GetNetworkLocation">From Network</string>
     <string name="GetGPSLocation">From GPS</string>

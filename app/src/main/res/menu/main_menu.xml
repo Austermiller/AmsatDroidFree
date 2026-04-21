@@ -65,6 +65,12 @@
 				android:id="@+id/MENU_DOWNLOAD_NEW_CELESTRAK" 
 				android:title="@string/DownloadNewCelestrakElem">
 			</item>
+			<item
+				android:visible="true"
+				android:enabled="true"
+				android:id="@+id/MENU_DOWNLOAD_PotentialDecays_CELESTRAK"
+				android:title="@string/DownloadPotentialDecaysCelestrakElem">
+			</item>
 		</menu>
 	</item>
 
