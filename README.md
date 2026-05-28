@@ -24,7 +24,7 @@ Key Update Benefits:
 
 - Robust Epoch Parsing Replaced substring-based timestamp parsing with delimiter‑based parsing. Handles variable‑precision ISO‑8601 timestamps from GP feeds (e.g., fractional seconds).
 
-- Backward Compatibility Preserved AMSAT nasabare.txt TLE downloads continue to function unchanged because AMSAT is still using TLE JSON data and not true GP JSON data. Existing cache serialization (ObjectInputStream / ObjectOutputStream) remains compatible. UI components (Spinner, RecyclerView, pass prediction workflow) required no changes.
+- Backward Compatibility Preserved AMSAT nasabare.txt TLE downloads continue to function unchanged. I will upgrade the AMSAT to use GP JSON data in a future version. Existing cache serialization (ObjectInputStream / ObjectOutputStream) remains compatible. UI components (Spinner, RecyclerView, pass prediction workflow) required no changes.
 
 - Fixed GEOSTATIONARY INFINITE LOOP. GEO satellites such as GOES 17 previously would lock the application. Because GEO Sats remains fixed over a single spot on the equator, it does not have predictable rising or setting passes. A future version of this app will display the elevation and azimuth for GEO Sats.
 
