@@ -489,6 +489,130 @@ public class TLE implements Serializable {
 		return importedSats;
 	}
 
+
+	/**
+	 * Imports satellites from CelesTrak's live General Perturbations (GP) JSON format.
+	 * Rebuilds TLE lines cleanly in memory using true production OMM keys.
+	 */
+	public static List<TLE> importSatFromGPJSON(final InputStream fileIS) throws IOException {
+		final List<TLE> importedSats = new ArrayList<TLE>();
+		final BufferedReader reader = new BufferedReader(new InputStreamReader(fileIS));
+		final com.google.gson.JsonParser parser = new com.google.gson.JsonParser();
+
+		try {
+			com.google.gson.JsonElement element = parser.parse(reader);
+			if (!element.isJsonArray()) {
+				return importedSats;
+			}
+
+			com.google.gson.JsonArray jsonArray = element.getAsJsonArray();
+			for (int i = 0; i < jsonArray.size(); i++) {
+				try {
+					com.google.gson.JsonObject obj = jsonArray.get(i).getAsJsonObject();
+
+					// 1. Core Key Mapping Corrections (CelesTrak uses MEAN_MOTION_DOT)
+					// String name = obj.has("OBJECT_NAME") ? obj.get("OBJECT_NAME").getAsString() : "UNKNOWN";
+
+					// 1. Safely extract values using JSON keys
+					String name = obj.has("OBJECT_NAME") ? obj.get("OBJECT_NAME").getAsString() : "UNKNOWN";
+					int trueNoradId = obj.has("NORAD_CAT_ID") ? obj.get("NORAD_CAT_ID").getAsInt() : 0;
+
+					// VISUAL OVERRIDE: If the name is UNKNOWN, or if it's a 6-digit analyst tracking ID,
+					// append the actual number to make it uniquely identifiable in your UI dropdown Spinner.
+					if ("UNKNOWN".equalsIgnoreCase(name.trim()) || trueNoradId > 69999) {
+						name = "ID (" + trueNoradId + ")";
+						//  name = name.trim() + " (" + trueNoradId + ")";
+					}
+
+
+					// int trueNoradId = obj.has("NORAD_CAT_ID") ? obj.get("NORAD_CAT_ID").getAsInt() : 0;
+					String epochIso = obj.get("EPOCH").getAsString(); // e.g. "2026-05-20T12:34:56.789123"
+
+					double meanMotionDot = obj.has("MEAN_MOTION_DOT") ? obj.get("MEAN_MOTION_DOT").getAsDouble() : 0.0;
+					double bstarVal = obj.has("BSTAR") ? obj.get("BSTAR").getAsDouble() : 0.0;
+					int elSet = obj.has("ELEMENT_SET_NO") ? obj.get("ELEMENT_SET_NO").getAsInt() : 0;
+
+					double inclination = obj.get("INCLINATION").getAsDouble();
+
+					double raan = obj.has("RA_OF_ASC_NODE") ? obj.get("RA_OF_ASC_NODE").getAsDouble() : (obj.has("RAAN") ? obj.get("RAAN").getAsDouble() : 0.0);
+
+					double eccentricity = obj.get("ECCENTRICITY").getAsDouble();
+					double argPerigee = obj.get("ARG_OF_PERICENTER").getAsDouble();
+					double meanAnomaly = obj.get("MEAN_ANOMALY").getAsDouble();
+					double meanMotion = obj.get("MEAN_MOTION").getAsDouble();
+					int revNum = obj.has("REV_AT_EPOCH") ? obj.get("REV_AT_EPOCH").getAsInt() : 0;
+
+					// 2. Safeguard limit configuration for 6-Digit IDs (> 69,999)
+					int stringLayoutId = trueNoradId;
+					if (trueNoradId > 69999) {
+						stringLayoutId = 99999;
+					}
+
+					// 3. Fixed Date String Extraction Rules (No index assumptions)
+					String[] dateTimeParts = epochIso.split("T");
+					String[] dateParts = dateTimeParts[0].split("-"); // Target structural index 0 [YYYY, MM, DD]
+
+					String timeStr = dateTimeParts[1].replace("Z", "");
+					String[] timeParts = timeStr.split(":"); // Target structural index 1 [HH, MM, SS.ssss]
+
+					int fullYear = Integer.parseInt(dateParts[0].trim());
+					int yearShort = fullYear % 100;
+					int month = Integer.parseInt(dateParts[1].trim());
+					int day = Integer.parseInt(dateParts[2].trim());
+
+					int hour = Integer.parseInt(timeParts[0].trim());
+					int min = Integer.parseInt(timeParts[1].trim());
+					double sec = Double.parseDouble(timeParts[2].trim());
+
+					java.util.Calendar cal = java.util.Calendar.getInstance(java.util.TimeZone.getTimeZone("UTC"));
+					cal.set(fullYear, month - 1, day, hour, min, (int)sec);
+					int dayOfYear = cal.get(java.util.Calendar.DAY_OF_YEAR);
+
+					double dayFraction = (hour * 3600.0 + min * 60.0 + sec) / 86400.0;
+					String tleEpoch = String.format(java.util.Locale.US, "%02d%012.8f", yearShort, dayOfYear + (dayFraction - ((int)sec / 86400.0)));
+
+					// 4. Re-encode numeric values to strict TLE strings
+					String fDerivStr = String.format(java.util.Locale.US, meanMotionDot >= 0 ? " .%08d" : "-.%08d", (int)Math.round(Math.abs(meanMotionDot) * 100000000));
+					String sDerivStr = " 00000-0";
+
+					String bstarFormatted = " 00000-0";
+					if (bstarVal != 0) {
+						int exp = (int) Math.floor(Math.log10(Math.abs(bstarVal))) + 1;
+						int mantissa = (int) Math.round((bstarVal / Math.pow(10, exp)) * 100000);
+						bstarFormatted = String.format(java.util.Locale.US, "%s%05d%s%d", bstarVal < 0 ? "-" : " ", Math.abs(mantissa), exp < 0 ? "-" : "+", Math.abs(exp));
+					}
+
+					String eccFormatted = String.format(java.util.Locale.US, "%07d", (int)Math.round(eccentricity * 10000000));
+
+					// 5. Build standard fixed-width strings with checksum values
+					String line1Raw = String.format(java.util.Locale.US, "1 %05dU          %s %s %s %s 0 %3d", stringLayoutId, tleEpoch, fDerivStr, sDerivStr, bstarFormatted, elSet % 1000);
+					int csum1 = 0; for(char c : line1Raw.toCharArray()) { if(Character.isDigit(c)) csum1+=Character.getNumericValue(c); else if(c=='-') csum1++; }
+					String line1 = String.format(java.util.Locale.US, "%-68s%1d", line1Raw, csum1 % 10);
+
+					String line2Raw = String.format(java.util.Locale.US, "2 %05d %8.4f %8.4f %s %8.4f %8.4f %11.8f%5d", stringLayoutId, inclination, raan, eccFormatted, argPerigee, meanAnomaly, meanMotion, revNum % 100000);
+					int csum2 = 0; for(char c : line2Raw.toCharArray()) { if(Character.isDigit(c)) csum2+=Character.getNumericValue(c); else if(c=='-') csum2++; }
+					String line2 = String.format(java.util.Locale.US, "%-68s%1d", line2Raw, csum2 % 10);
+
+					// 6. Map elements directly to the base tracking constructor
+					TLE derivedSatellite = new TLE(new String[] { name, line1, line2 });
+
+					// Overwrite dummy Layout ID with actual true numeric ID
+					derivedSatellite.catnum = trueNoradId;
+
+					importedSats.add(derivedSatellite);
+
+				} catch (Exception innerEx) {
+					// Ensures edge exceptions do not block other valid entries
+					continue;
+				}
+			}
+		} catch (Exception e) {
+			throw new IOException("Failed parsing GP JSON format file stream", e);
+		}
+		return importedSats;
+	}
+
+
 	@Override
 	public String toString() {
 		return name;

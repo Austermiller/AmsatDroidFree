@@ -131,17 +131,31 @@ public class HamSatDroid extends ASDActivity implements OnGestureListener {
     private static final String BIN_PASS_FILENAME = "prefs.bin";
     private static final String BIN_ELEM_FILENAME = "elems.bin";
     private static final String ELEM_URL_AMATEUR_AMSAT = "https://www.amsat.org/amsat/ftp/keps/current/nasabare.txt";
-    private static final String ELEM_URL_AMATEUR_CELESTRAK = "https://celestrak.org/NORAD/elements/gp.php?GROUP=amateur&FORMAT=tle";
+
+    // amsat is not using true GP json yet.  it is just tle displayed in json format.
+    // private static final String ELEM_URL_AMATEUR_AMSAT =  "https://newark192.amsat.org/gpdata/current/daily-bulletin.json";
+    private static final String ELEM_URL_AMATEUR_CELESTRAK = "https://celestrak.org/NORAD/elements/gp.php?GROUP=amateur&FORMAT=json";
     // was...   https://celestrak.com/NORAD/elements/amateur.txt
-    private static final String ELEM_URL_WEATHER_CELESTRAK = "https://celestrak.org/NORAD/elements/gp.php?GROUP=weather&FORMAT=tle";
+    // was using...  "https://celestrak.org/NORAD/elements/gp.php?GROUP=amateur&FORMAT=tle";
+    private static final String ELEM_URL_WEATHER_CELESTRAK = "https://celestrak.org/NORAD/elements/gp.php?GROUP=weather&FORMAT=json";
     // was using "https://celestrak.com/NORAD/elements/noaa.txt" which is no longer a valid URL
-    private static final String ELEM_URL_CUBESAT_CELESTRAK = "https://celestrak.org/NORAD/elements/gp.php?GROUP=cubesat&FORMAT=tle";
+    private static final String ELEM_URL_CUBESAT_CELESTRAK = "https://celestrak.org/NORAD/elements/gp.php?GROUP=cubesat&FORMAT=json";
     // was... "https://celestrak.com/NORAD/elements/cubesat.txt";
-    private static final String ELEM_URL_RESOURCES_CELESTRAK = "https://celestrak.org/NORAD/elements/gp.php?GROUP=resource&FORMAT=tle";
+    private static final String ELEM_URL_RESOURCES_CELESTRAK = "https://celestrak.org/NORAD/elements/gp.php?GROUP=resource&FORMAT=json";
     // was... "https://celestrak.com/NORAD/elements/resource.txt";
-    private static final String ELEM_URL_NEW_CELESTRAK = "https://celestrak.org/NORAD/elements/gp.php?GROUP=last-30-days&FORMAT=tle";
+    private static final String ELEM_URL_NEW_CELESTRAK = "https://celestrak.org/NORAD/elements/gp.php?GROUP=last-30-days&FORMAT=json";
     // was... "https://celestrak.com/NORAD/elements/tle-new.txt";
-    private static final String ELEM_URL_POTENTIALDECAYS_CELESTRAK = "https://celestrak.org/NORAD/elements/gp.php?SPECIAL=DECAYING&FORMAT=tle";
+    private static final String ELEM_URL_POTENTIALDECAYS_CELESTRAK = "https://celestrak.org/NORAD/elements/gp.php?SPECIAL=DECAYING&FORMAT=json";
+
+    // use the Space Fnce analyst below for testing catalog ID values that are over 69,999. . .
+    // private static final String ELEM_URL_POTENTIALDECAYS_CELESTRAK = "https://celestrak.org/NORAD/elements/gp.php?GROUP=Analyst&FORMAT=json";
+
+
+
+    // CELESTRAK ENDPOINTS MODIFIED STRICTLY TO FORMAT=json
+
+
+
 
     // Various
     private static List<TLE> allSatElems;
@@ -621,7 +635,6 @@ public class HamSatDroid extends ASDActivity implements OnGestureListener {
         mRecyclerView.setAdapter(mAdapter);
     }
 
-
     private void recalcPass(final int hoursAhead) {
         // How long to go back/forward in time to find a passes (in hours)
         final int calcRange = 24;
@@ -635,9 +648,23 @@ public class HamSatDroid extends ASDActivity implements OnGestureListener {
             myCal = Calendar.getInstance();
         }
         TLE myelem = null;
-        // Calculate next satellite passes
+        // try to Calculate next satellite passes unless it is a GEO satellite.
         try {
             myelem = setSatellite();
+            // --- GEOSTATIONARY INFINITE LOOP INTERCEPTOR ---
+            // test using GOES 17 sat.
+            // A mean motion around 1.0027 means the satellite is geostationary (GEO).
+            // These birds stay stationary over the equator and never rise or set.
+            double meanMotionVal = myelem.getMeanmo();
+            if (meanMotionVal > 0.9 && meanMotionVal < 1.1) {
+                // Instantly break the calculation pass to prevent an app hang/ANR
+                HamSatDroid.setPasses(new ArrayList<SatPassTime>()); // Clear out past records safely
+                passHeader = myelem.getName() + " is a Geostationary Satellite.\n\n"
+                        + "Because it remains fixed over a single spot on the equator, "
+                        + "it does not have predictable rising or setting passes.  A future version of this app will display the elevation and azimuth for GEO Sats.";
+                return; // Stop execution right here
+            }
+            // ------------Calculate next satellite passes------------------
             HamSatDroid.setPassPredictor(new PassPredictor(myelem, HamSatDroid.getGroundStation()));
             HamSatDroid.setPasses(getPassPredictor().getPasses(myCal.getTime(), hoursAhead, true));
         } catch (final InvalidTleException e) {
@@ -956,8 +983,48 @@ public class HamSatDroid extends ASDActivity implements OnGestureListener {
             } else {
                 throw new IllegalArgumentException("Unknown keplerian source[" + kepSource + "]");
             }
-            // create a temporary list of Sats used for sorting
-            final List<TLE> tmpSatElems = TLE.importSat(url.openStream());
+
+            // DYNAMIC PARSER CHANNEL ROUTER WITH FIREWALL DETECTOR:
+            final List<TLE> tmpSatElems;
+            String urlString = url.toString();
+
+            if (urlString.contains("FORMAT=json") || urlString.contains("daily-bulletin.json")) {
+                // Open a formal HTTP connection instead of a blind stream
+                java.net.HttpURLConnection conn = (java.net.HttpURLConnection) url.openConnection();
+                conn.setRequestMethod("GET");
+                conn.setConnectTimeout(10000); // 10 second timeout
+                conn.setReadTimeout(10000);
+
+                int responseCode = conn.getResponseCode();
+
+                if (responseCode == java.net.HttpURLConnection.HTTP_FORBIDDEN) { // HTTP 403
+                    // The client IP has run into CelesTrak's automated rate-limiting firewall
+                    if (context instanceof android.app.Activity) {
+                        ((android.app.Activity) context).runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                new android.app.AlertDialog.Builder(context)
+                                        .setTitle("Connection Rate-Limited")
+                                        .setMessage("CelesTrak has temporarily blocked this connection for downloading too frequently. Please wait or use the AMSAT source.")
+                                        .setPositiveButton(OK, null).show();
+                            }
+                        });
+                    }
+                    return false; // Safely cancel the task execution path
+                }
+
+                // Connection is healthy (HTTP 200), proceed to parse JSON data
+                java.io.InputStream jsonStream = conn.getInputStream();
+                tmpSatElems = TLE.importSatFromGPJSON(jsonStream);
+                jsonStream.close();
+                conn.disconnect();
+
+            } else {
+                // Preserve legacy blind stream loading for flat text sources (AMSAT)
+                tmpSatElems = TLE.importSat(url.openStream());
+            }
+
+
             if (tmpSatElems != null) {
                 allSatElems = tmpSatElems;
                 // determine the user's satellite sorting setting and then display them sorted
@@ -978,8 +1045,6 @@ public class HamSatDroid extends ASDActivity implements OnGestureListener {
                 // mark it as successful.
                 success = true;
             }
-            allSatElems = tmpSatElems;
-            success = true;
         } catch (final FileNotFoundException e) {
             e.printStackTrace();
         } catch (final IOException e) {
@@ -989,6 +1054,8 @@ public class HamSatDroid extends ASDActivity implements OnGestureListener {
         }
         return success;
     }
+
+
 
     void loadElemFromInternalFile() {
         try {
