@@ -130,10 +130,10 @@ public class HamSatDroid extends ASDActivity implements OnGestureListener {
             + "/Download/nasabare.txt";
     private static final String BIN_PASS_FILENAME = "prefs.bin";
     private static final String BIN_ELEM_FILENAME = "elems.bin";
-    private static final String ELEM_URL_AMATEUR_AMSAT = "https://www.amsat.org/amsat/ftp/keps/current/nasabare.txt";
+    // private static final String ELEM_URL_AMATEUR_AMSAT = "https://www.amsat.org/amsat/ftp/keps/current/nasabare.txt";
 
     // amsat is not using true GP json yet.  it is just tle displayed in json format.
-    // private static final String ELEM_URL_AMATEUR_AMSAT =  "https://newark192.amsat.org/gpdata/current/daily-bulletin.json";
+    private static final String ELEM_URL_AMATEUR_AMSAT =  "https://newark192.amsat.org/gpdata/current/daily-bulletin.json";
     private static final String ELEM_URL_AMATEUR_CELESTRAK = "https://celestrak.org/NORAD/elements/gp.php?GROUP=amateur&FORMAT=json";
     // was...   https://celestrak.com/NORAD/elements/amateur.txt
     // was using...  "https://celestrak.org/NORAD/elements/gp.php?GROUP=amateur&FORMAT=tle";

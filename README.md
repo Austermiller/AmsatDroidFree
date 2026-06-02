@@ -4,17 +4,19 @@ Here is an updated version of the AmsatDroidFree application (originally created
 
 Key Update Benefits:
 
-✅ Compatible with CelesTrak’s General Perturbation (GP) transition and deprecation of legacy TLE feeds.
+✅ Compatible with CelesTrak’s and Amsat's General Perturbation (GP) transition and deprecation of legacy TLE feeds.
 
 ✅ Safe handling of future 6‑digit NORAD IDs.
 
-✅ No regression to existing AMSAT or offline workflows.
+✅ No regression to existing offline TLE workflows.
 
 ✅ Safe handling of GEO satellites, without locking the application.
 
 ✅ Zero impact to SGP4 math, predictions, or UI behavior.
 
 - Added Native General Perturbation (GP) (JSON) Support Integrated support for CelesTrak’s gp.php endpoints using FORMAT=json. Parses CCSDS/OMM-style GP data with explicit key-value fields instead of fixed-width TLE strings. Implemented a new parser: TLE.importSatFromGPJSON(InputStream) Uses Gson for robust JSON parsing.
+
+- Migrated AMSAT feed to General Perturbation (GP) (JSON) with Orbit Mean-Elements Message (OMM) data standards parsing.
 
 - In‑Memory GP → TLE Reconstruction GP elements are converted in memory into classic 3‑line TLE structures. This preserves compatibility with the existing predict4java SGP4 engine, which relies on fixed‑column TLE parsing. No changes were made to orbital math, propagators, or pass prediction logic.
 
@@ -23,8 +25,6 @@ Key Update Benefits:
 - Future‑Proofing for 6‑Digit NORAD Catalog IDs Added a safeguard for catalog numbers > 69,999: Uses a temporary 5‑digit placeholder in reconstructed TLE strings (to satisfy fixed-width parsing). Reinjects the true numeric NORAD ID directly into the TLE object after construction. Prevents crashes caused by TLE field width limits while preserving correct sorting and display.
 
 - Robust Epoch Parsing Replaced substring-based timestamp parsing with delimiter‑based parsing. Handles variable‑precision ISO‑8601 timestamps from GP feeds (e.g., fractional seconds).
-
-- Backward Compatibility Preserved AMSAT nasabare.txt TLE downloads continue to function unchanged. I will upgrade the AMSAT to use GP JSON data in a future version. Existing cache serialization (ObjectInputStream / ObjectOutputStream) remains compatible. UI components (Spinner, RecyclerView, pass prediction workflow) required no changes.
 
 - Fixed GEOSTATIONARY INFINITE LOOP. GEO satellites such as GOES 17 previously would lock the application. Because GEO Sats remains fixed over a single spot on the equator, it does not have predictable rising or setting passes. A future version of this app will display the elevation and azimuth for GEO Sats.
 
