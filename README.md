@@ -20,8 +20,6 @@ Key Update Benefits:
 
 - In‑Memory GP → TLE Reconstruction GP elements are converted in memory into classic 3‑line TLE structures. This preserves compatibility with the existing predict4java SGP4 engine, which relies on fixed‑column TLE parsing. No changes were made to orbital math, propagators, or pass prediction logic.
 
-- Dynamic Parser Routing Download and file‑loading logic now dynamically routes data based on source format: General Perturbation (GP) JSON → importSatFromGPJSON Legacy TLE text → existing importSat Enables seamless switching between: CelesTrak (General Perturbation-GP JSON) AMSAT (traditional TLE text)
-
 - Future‑Proofing for 6‑Digit NORAD Catalog IDs Added a safeguard for catalog numbers > 69,999: Uses a temporary 5‑digit placeholder in reconstructed TLE strings (to satisfy fixed-width parsing). Reinjects the true numeric NORAD ID directly into the TLE object after construction. Prevents crashes caused by TLE field width limits while preserving correct sorting and display.
 
 - Robust Epoch Parsing Replaced substring-based timestamp parsing with delimiter‑based parsing. Handles variable‑precision ISO‑8601 timestamps from GP feeds (e.g., fractional seconds).
