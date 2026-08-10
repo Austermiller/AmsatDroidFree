@@ -692,7 +692,8 @@ public class TLE implements Serializable {
 					int dayOfYear = cal.get(java.util.Calendar.DAY_OF_YEAR);
 
 					double dayFraction = (hour * 3600.0 + min * 60.0 + sec) / 86400.0;
-					String tleEpoch = String.format(java.util.Locale.US, "%02d%012.8f", yearShort, dayOfYear + (dayFraction - ((double)((int)sec) / 86400.0)));
+					String tleEpoch = String.format(java.util.Locale.US, "%02d%012.8f", yearShort, dayOfYear + dayFraction);
+					// String tleEpoch = String.format(java.util.Locale.US, "%02d%012.8f", yearShort, dayOfYear + (dayFraction - ((double)((int)sec) / 86400.0)));
 
 					// 4. Enforce Layout Clamping Rule for Legacy 5-Digit Formats
 					int stringLayoutId = (trueNoradId > 69999) ? 99999 : trueNoradId;
